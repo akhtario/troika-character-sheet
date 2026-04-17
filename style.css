@@ -189,6 +189,15 @@ body {
   color: var(--accent);
 }
 
+.btn-edit-toggle.flash {
+  animation: flash-edit 0.6s ease;
+}
+
+@keyframes flash-edit {
+  0%, 100% { background: var(--bg-input); color: var(--text-muted); border-color: var(--border); }
+  25%, 75% { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+}
+
 /* === Lockable sections: locked by default === */
 .lockable input[type="text"],
 .lockable select,

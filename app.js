@@ -381,6 +381,18 @@
     $(".provisions-money").classList.toggle("edit-mode");
   });
 
+  // Flash the edit button when user clicks a locked field
+  document.querySelectorAll(".lockable").forEach((section) => {
+    section.addEventListener("click", (e) => {
+      if (section.classList.contains("edit-mode")) return;
+      const btn = section.querySelector(".btn-edit-toggle");
+      if (!btn) return;
+      btn.classList.remove("flash");
+      void btn.offsetWidth; // force reflow to restart animation
+      btn.classList.add("flash");
+    });
+  });
+
   document.addEventListener("click", (e) => {
     if (e.target.id === "btn-add-ability") {
       if (!current) return;
