@@ -1,0 +1,876 @@
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f5ead0;
+  --bg-section: #fffdf5;
+  --bg-input: #ffffff;
+  --border: #1a1a2e;
+  --text: #1a1a2e;
+  --text-muted: #5c5c7a;
+  --accent: #2e6b8a;
+  --accent-dim: #1e4a6e;
+  --danger: #c05050;
+  --success: #2e7a4a;
+  --fail: #c05050;
+  --radius: 6px;
+  --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* === Header === */
+.app-header {
+  background: var(--bg-section);
+  border-bottom: 2px solid var(--accent);
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.character-selector {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.character-selector select {
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+  min-width: 140px;
+}
+
+.character-selector button {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.character-selector button:hover {
+  background: var(--border);
+}
+
+.character-selector .btn-danger:hover {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* === Main Layout === */
+.sheet {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* === Sections === */
+.section {
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.section h2 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title-row h2 {
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.section-title-row + .list-header,
+.section-title-row + .editable-list {
+  border-top: 1px solid var(--border);
+  padding-top: 0.4rem;
+  margin-top: 0.4rem;
+}
+
+.btn-add-inline {
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-add-inline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+
+.abilities .btn-remove {
+  display: none;
+}
+
+.abilities.edit-mode .btn-remove {
+  display: inline-flex;
+}
+
+.btn-edit-toggle {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-edit-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* === Lockable sections: locked by default === */
+.lockable input[type="text"],
+.lockable select,
+.lockable textarea {
+  pointer-events: none;
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+.lockable input[type="number"] {
+  pointer-events: none;
+  background: var(--bg);
+  border-color: var(--border);
+  -moz-appearance: textfield;
+}
+
+.lockable input[type="number"]::-webkit-inner-spin-button,
+.lockable input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.lockable.edit-mode input[type="text"],
+.lockable.edit-mode input[type="number"],
+.lockable.edit-mode select,
+.lockable.edit-mode textarea {
+  pointer-events: auto;
+  background: var(--bg-input);
+}
+
+.lockable.edit-mode input[type="number"] {
+  -moz-appearance: auto;
+}
+
+.lockable.edit-mode input[type="number"]::-webkit-inner-spin-button,
+.lockable.edit-mode input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: auto;
+}
+
+.lockable input[type="number"]::-webkit-inner-spin-button,
+.lockable input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.lockable.edit-mode input[type="number"] {
+  pointer-events: auto;
+  background: var(--bg-input);
+  -moz-appearance: auto;
+}
+
+.lockable.edit-mode input[type="number"]::-webkit-inner-spin-button,
+.lockable.edit-mode input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: auto;
+}
+.lockable select,
+.lockable textarea {
+  pointer-events: none;
+  background: var(--bg);
+  border-color: var(--border);
+}
+
+.lockable input[type="checkbox"] {
+  pointer-events: none;
+}
+
+.lockable .shield-label {
+  pointer-events: none;
+}
+
+.lockable.edit-mode .shield-label {
+  pointer-events: auto;
+}
+
+/* Always allow "used" checkboxes in abilities */
+.lockable input[type="checkbox"][data-field="used"] {
+  pointer-events: auto;
+}
+
+.lockable.edit-mode input[type="text"],
+.lockable.edit-mode input[type="number"],
+.lockable.edit-mode select,
+.lockable.edit-mode textarea {
+  pointer-events: auto;
+  background: var(--bg-input);
+}
+
+.lockable.edit-mode input[type="checkbox"] {
+  pointer-events: auto;
+}
+
+/* === Fields === */
+.field-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.field-row label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.6rem;
+  font-size: 1rem;
+  font-family: var(--font);
+  width: 100%;
+  transition: border-color 0.15s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* === Core Stats === */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.stat-block {
+  text-align: center;
+}
+
+.stat-block label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.3rem;
+}
+
+.stat-block input[type="number"] {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding: 0.4rem;
+  width: 100%;
+}
+
+.dual-input {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.dual-input input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.4rem 1.6rem;
+}
+
+.separator {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+/* === Editable Lists (Skills, Spells, Inventory) === */
+.list-header {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 0.25rem 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.col-name { flex: 1; }
+.col-rank { width: 50px; text-align: center; }
+.col-plus { width: 16px; text-align: center; }
+.col-skill-ref { width: 36px; text-align: center; }
+.col-eq { width: 16px; text-align: center; }
+.col-total { width: 44px; text-align: center; }
+.col-slot { width: 28px; text-align: center; }
+.col-equipped { width: 36px; text-align: center; }
+.col-action { width: 32px; }
+
+.editable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.list-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.list-row input[type="text"] {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.list-row input[type="number"] {
+  width: 50px;
+  text-align: center;
+  padding: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.list-row .slot-num {
+  width: 28px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.list-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.btn-remove {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn-remove:hover {
+  color: var(--danger);
+  background: rgba(192, 80, 80, 0.15);
+}
+
+/* === Ability row calculation display === */
+.ability-row .calc-plus,
+.ability-row .calc-eq {
+  width: 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.ability-row .calc-skill {
+  width: 36px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.ability-row .calc-total {
+  width: 44px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.3rem 0.2rem;
+  flex-shrink: 0;
+}
+
+.abilities-header {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0 0.25rem 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.btn-add {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  width: 100%;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.btn-add:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.armour-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.armour-label {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.armour-av {
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.armour-row label {
+  font-size: 0.85rem;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.armour-row select {
+  width: auto;
+}
+
+.armour-row .text-muted {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* === Weapons Section === */
+.section-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.empty-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 0.75rem;
+  font-style: italic;
+}
+
+.weapons-header {
+  display: flex;
+  gap: 0.3rem;
+  padding: 0 0.25rem 0.3rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.weapons-header .col-name {
+  flex: 1;
+  min-width: 80px;
+}
+
+.dmg-col {
+  width: 36px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.weapon-row {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.weapon-row .weapon-name {
+  flex: 1;
+  min-width: 80px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.9rem;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weapon-row input[type="number"] {
+  width: 36px;
+  min-width: 36px;
+  text-align: center;
+  padding: 0.3rem 0.2rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  flex-shrink: 0;
+  color: var(--danger);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  -moz-appearance: textfield;
+}
+
+.weapon-row input[type="number"]::-webkit-inner-spin-button,
+.weapon-row input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.weapons.edit-mode .weapon-row input[type="number"] {
+  -moz-appearance: auto;
+}
+
+.weapons.edit-mode .weapon-row input[type="number"]::-webkit-inner-spin-button,
+.weapons.edit-mode .weapon-row input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: auto;
+}
+
+.weapon-row .dmg-fixed {
+  width: 36px;
+  min-width: 36px;
+  text-align: center;
+  padding: 0.35rem 0.15rem;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+/* === Dice Roller === */
+.dice-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.btn-dice {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--accent-dim);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-dice:hover {
+  background: var(--accent-dim);
+  color: #fff;
+}
+
+.btn-dice:active {
+  transform: scale(0.96);
+}
+
+.roll-under-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.roll-under-row label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.roll-under-row select {
+  flex: 1;
+  min-width: 140px;
+  max-width: 280px;
+}
+
+.dice-result {
+  min-height: 2.5rem;
+  padding: 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 1.1rem;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.dice-result.pass {
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.dice-result.fail {
+  border-color: var(--fail);
+  color: var(--fail);
+}
+
+.dice-result .roll-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+  display: block;
+}
+
+.dice-result .roll-detail {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* === Import/Export === */
+.io-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-io {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-input);
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-io:hover {
+  background: var(--border);
+}
+
+/* === Footer === */
+footer {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* === Desktop (2 columns) === */
+@media (min-width: 700px) {
+  .sheet {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .identity {
+    grid-column: 1 / -1;
+  }
+
+  .abilities {
+    grid-column: 1 / 2;
+  }
+
+  .inventory {
+    grid-column: 2 / 3;
+  }
+}
+
+/* === Wide desktop === */
+@media (min-width: 1100px) {
+  .sheet {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* === Extra wide === */
+@media (min-width: 1400px) {
+  .sheet {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* === Small screen adjustments === */
+@media (max-width: 400px) {
+  .stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .app-header h1 {
+    text-align: center;
+  }
+
+  .character-selector {
+    justify-content: center;
+  }
+}
+
+/* === Identity grid layout === */
+.identity-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+
+@media (min-width: 700px) {
+  .identity-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* === Confirm Modal === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-overlay[hidden] {
+  display: none;
+}
+
+.modal {
+  background: var(--bg-section);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+}
+
+.modal p {
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.modal-actions button {
+  padding: 0.5rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  background: var(--bg-input);
+  color: var(--text);
+}
+
+.modal-actions .btn-danger {
+  background: var(--danger);
+  color: #fff;
+  border-color: var(--danger);
+}

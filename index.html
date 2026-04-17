@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Troika! Character Sheet</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>Troika! Character Sheet</h1>
+    <div class="character-selector">
+      <select id="character-select" aria-label="Select character"></select>
+      <button id="btn-new-char" title="New character">+ New</button>
+      <button id="btn-delete-char" title="Delete character" class="btn-danger">Delete</button>
+      <button id="btn-export" class="btn-io" title="Export character as JSON">Export</button>
+      <button id="btn-import" class="btn-io" title="Import character from JSON">Import</button>
+      <input type="file" id="import-file" accept=".json" hidden>
+    </div>
+  </header>
+
+  <main class="sheet">
+    <!-- Identity & Core Stats -->
+    <section class="section identity lockable">
+      <div class="section-title-row">
+        <h2>Character</h2>
+        <button class="btn-edit-toggle" id="btn-edit-identity" title="Edit character">Edit</button>
+      </div>
+      <div class="identity-grid">
+        <div class="field-row">
+          <label for="char-name">Name</label>
+          <input type="text" id="char-name" data-key="name" placeholder="Enter name">
+        </div>
+        <div class="field-row">
+          <label for="char-background">Background</label>
+          <input type="text" id="char-background" data-key="background" placeholder="e.g. Cackling Gibberer">
+        </div>
+        <div class="field-row">
+          <label for="char-pronouns">Pronouns</label>
+          <input type="text" id="char-pronouns" data-key="pronouns" placeholder="e.g. they/them">
+        </div>
+        <div class="field-row">
+          <label for="stat-skill">Skill</label>
+          <input type="number" id="stat-skill" data-key="skill" min="1" max="99">
+        </div>
+        <div class="field-row">
+          <label for="stat-stamina-current">Stamina</label>
+          <div class="dual-input">
+            <input type="number" id="stat-stamina-current" data-key="staminaCurrent" min="0" max="99" placeholder="Cur">
+            <span class="separator">/</span>
+            <input type="number" id="stat-stamina-max" data-key="staminaMax" min="1" max="99" placeholder="Max">
+          </div>
+        </div>
+        <div class="field-row">
+          <label for="stat-luck-current">Luck</label>
+          <div class="dual-input">
+            <input type="number" id="stat-luck-current" data-key="luckCurrent" min="0" max="99" placeholder="Cur">
+            <span class="separator">/</span>
+            <input type="number" id="stat-luck-max" data-key="luckMax" min="1" max="99" placeholder="Max">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills & Spells -->
+    <section class="section abilities lockable">
+      <div class="section-title-row">
+        <h2>Skills &amp; Spells</h2>
+        <button class="btn-edit-toggle" id="btn-edit-abilities" title="Edit skills &amp; spells">Edit</button>
+      </div>
+      <div class="list-header abilities-header">
+        <span class="col-used" title="Successful use">&#10003;</span>
+        <span class="col-name">Name</span>
+        <span class="col-rank">Rank</span>
+        <span class="col-plus">+</span>
+        <span class="col-skill-ref">Skill</span>
+        <span class="col-eq">=</span>
+        <span class="col-total">Total</span>
+        <span class="col-action"></span>
+      </div>
+      <div id="abilities-list" class="editable-list"></div>
+    </section>
+
+    <!-- Inventory -->
+    <section class="section inventory lockable">
+      <div class="section-title-row">
+        <h2>Inventory</h2>
+        <button class="btn-edit-toggle" id="btn-edit-inventory" title="Edit inventory">Edit</button>
+      </div>
+      <div class="list-header">
+        <span class="col-slot">#</span>
+        <span class="col-name">Item</span>
+        <span class="col-equipped">Weapon</span>
+      </div>
+      <div id="inventory-list" class="editable-list"></div>
+      <div class="armour-row">
+        <span class="armour-label">Wearing</span>
+        <select id="armour-select">
+          <option value="0">Unarmoured</option>
+          <option value="1">Light Armour (-1)</option>
+          <option value="2">Modest Armour (-2)</option>
+          <option value="3">Heavy Armour (-3)</option>
+        </select>
+        <label for="shield-check" class="shield-label">
+          <input type="checkbox" id="shield-check"> Shield (-1)
+        </label>
+        <span id="armour-av" class="armour-av">(AV: 0)</span>
+        <span id="armour-slots-info" class="text-muted"></span>
+      </div>
+    </section>
+
+    <!-- Weapons (damage tables for equipped items) -->
+    <section class="section weapons lockable">
+      <div class="section-title-row">
+        <h2>Weapons</h2>
+        <button class="btn-edit-toggle" id="btn-edit-weapons" title="Edit damage tables">Edit</button>
+      </div>
+      <p class="section-hint">Damage tables for items marked as weapons above.</p>
+      <div class="weapons-header">
+        <span class="col-name">Weapon</span>
+        <span class="dmg-col">1</span>
+        <span class="dmg-col">2</span>
+        <span class="dmg-col">3</span>
+        <span class="dmg-col">4</span>
+        <span class="dmg-col">5</span>
+        <span class="dmg-col">6</span>
+        <span class="dmg-col">7+</span>
+      </div>
+      <div id="weapons-list" class="editable-list"></div>
+      <div id="weapons-empty" class="empty-hint">No weapons equipped. Check "Weapon" on an inventory item.</div>
+    </section>
+
+    <!-- Provisions & Money -->
+    <section class="section provisions-money lockable">
+      <div class="section-title-row">
+        <h2>Provisions &amp; Money</h2>
+        <button class="btn-edit-toggle" id="btn-edit-provisions" title="Edit provisions &amp; money">Edit</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-block">
+          <label>Provisions</label>
+          <input type="number" id="provisions" data-key="provisions" min="0" max="999">
+        </div>
+        <div class="stat-block">
+          <label>Silver Pence</label>
+          <input type="number" id="pence" data-key="pence" min="0" max="99999">
+        </div>
+      </div>
+    </section>
+
+    <!-- Notes -->
+    <section class="section notes">
+      <h2>Notes</h2>
+      <textarea id="char-notes" data-key="notes" rows="6" placeholder="Background details, session notes, etc."></textarea>
+    </section>
+
+    <!-- Dice Roller -->
+    <section class="section dice-roller">
+      <h2>Dice Roller</h2>
+      <div class="dice-controls">
+        <button id="btn-roll-2d6" class="btn-dice">Roll 2d6</button>
+        <button id="btn-roll-d6" class="btn-dice">Roll d6</button>
+        <button id="btn-roll-d66" class="btn-dice">Roll d66</button>
+      </div>
+      <div class="roll-under-row">
+        <label for="roll-target">Roll Under:</label>
+        <select id="roll-target" aria-label="Select skill to test"></select>
+        <button id="btn-roll-under" class="btn-dice">Test</button>
+      </div>
+      <div id="dice-result" class="dice-result"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>This Troika! character sheet is a fan-made and is not affiliated with the Melsonian Arts Council.</p>
+  </footer>
+
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="modal-overlay" hidden>
+    <div class="modal">
+      <p id="confirm-modal-msg"></p>
+      <div class="modal-actions">
+        <button id="confirm-modal-ok" class="btn-danger">Delete</button>
+        <button id="confirm-modal-cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
