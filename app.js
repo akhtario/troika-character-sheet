@@ -1,71 +1,17 @@
 (() => {
   "use strict";
 
-  const STORAGE_KEY = "troika-characters";
-  const ACTIVE_KEY = "troika-active-id";
-
-  // === Data helpers ===
-
-  function generateId() {
-    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-  }
-
-  function rollDice(n, sides) {
-    let total = 0;
-    for (let i = 0; i < n; i++) total += Math.floor(Math.random() * sides) + 1;
-    return total;
-  }
-
-  function blankCharacter() {
-    const stamina = rollDice(2, 6) + 12;
-    const luck = rollDice(1, 6) + 6;
-    return {
-      id: generateId(),
-      name: "New Character",
-      background: "",
-      pronouns: "",
-      skill: rollDice(1, 3) + 3,
-      staminaCurrent: stamina,
-      staminaMax: stamina,
-      luckCurrent: luck,
-      luckMax: luck,
-      skills: [{ name: "", rank: 1 }],
-      spells: [],
-      abilities: [{ name: "", rank: 1 }],
-      unarmedDamage: [1, 1, 1, 2, 2, 3, 4],
-      inventory: [
-        { name: "Knife", equipped: true, damage: [2, 2, 2, 2, 4, 8, 10] },
-        { name: "Lantern", equipped: false, damage: [0, 0, 0, 0, 0, 0, 0] },
-        { name: "Flask of Oil", equipped: false, damage: [0, 0, 0, 0, 0, 0, 0] },
-        ...Array.from({ length: 9 }, () => ({ name: "", equipped: false, damage: [0, 0, 0, 0, 0, 0, 0] })),
-      ],
-      provisions: 6,
-      pence: rollDice(2, 6),
-      armour: 0,
-      shield: false,
-      notes: "",
-    };
-  }
-
-  function loadAll() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveAll(chars) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(chars));
-  }
-
-  function getActiveId() {
-    return localStorage.getItem(ACTIVE_KEY);
-  }
-
-  function setActiveId(id) {
-    localStorage.setItem(ACTIVE_KEY, id);
-  }
+  // Data model, persistence and dice helpers live in js/storage.js and js/dice.js
+  const {
+    generateId,
+    blankCharacter,
+    loadAll,
+    saveAll,
+    getActiveId,
+    setActiveId,
+    migrateCharacter,
+  } = Troika.storage;
+  const { rollD6 } = Troika.dice;
 
   // === State ===
 
@@ -128,26 +74,6 @@
     renderInventory();
     renderWeapons();
     populateRollTargets();
-  }
-
-  // === Migration: merge old skills/spells into abilities ===
-
-  function migrateCharacter(c) {
-    if (!c.abilities) {
-      c.abilities = [];
-      if (c.skills && c.skills.length) c.abilities.push(...c.skills);
-      if (c.spells && c.spells.length) c.abilities.push(...c.spells);
-      if (c.abilities.length === 0) c.abilities.push({ name: "", rank: 1 });
-    }
-    // Ensure inventory items have damage arrays
-    if (c.inventory) {
-      c.inventory.forEach((item) => {
-        if (!item.damage) item.damage = [0, 0, 0, 0, 0, 0, 0];
-      });
-    }
-    if (c.armour === undefined) c.armour = 0;
-    if (c.shield === undefined) c.shield = false;
-    return c;
   }
 
   // === Abilities list rendering ===
@@ -429,6 +355,19 @@
     renderCharacter();
   });
 
+  $("#btn-clone-char").addEventListener("click", () => {
+    if (!current) return;
+    const clone = JSON.parse(JSON.stringify(current));
+    clone.id = generateId();
+    clone.name = `${current.name || "Unnamed"} (Copy)`;
+    characters.push(clone);
+    saveAll(characters);
+    current = clone;
+    setActiveId(clone.id);
+    populateSelector();
+    renderCharacter();
+  });
+
   // === Custom Confirm Modal ===
   const confirmOverlay = $("#confirm-modal");
   const confirmMsg = $("#confirm-modal-msg");
@@ -518,10 +457,6 @@
     if (match) sel.value = match.value;
   }
 
-  function rollD6() {
-    return Math.floor(Math.random() * 6) + 1;
-  }
-
   function showResult(html, className) {
     const el = $("#dice-result");
     el.innerHTML = html;
@@ -561,7 +496,11 @@
   $("#btn-export").addEventListener("click", async () => {
     if (!current) return;
     const blob = new Blob([JSON.stringify(current, null, 2)], { type: "application/json" });
-    const fileName = `${(current.name || "character").replace(/\s+/g, "_")}.json`;
+    const safeName = (current.name || "character")
+      .trim()
+      .replace(/\s+/g, "_")
+      .replace(/[^a-zA-Z0-9_-]/g, "") || "character";
+    const fileName = `${safeName}.json`;
 
     if (window.showSaveFilePicker) {
       try {
@@ -601,6 +540,7 @@
           return;
         }
         data.id = generateId(); // always assign a new id on import
+        migrateCharacter(data); // normalize schema in case the file is old or hand-edited
         characters.push(data);
         saveAll(characters);
         current = data;

@@ -200,6 +200,7 @@ body {
 
 /* === Lockable sections: locked by default === */
 .lockable input[type="text"],
+.lockable input[type="number"],
 .lockable select,
 .lockable textarea {
   pointer-events: none;
@@ -208,9 +209,6 @@ body {
 }
 
 .lockable input[type="number"] {
-  pointer-events: none;
-  background: var(--bg);
-  border-color: var(--border);
   -moz-appearance: textfield;
 }
 
@@ -220,59 +218,12 @@ body {
   margin: 0;
 }
 
-.lockable.edit-mode input[type="text"],
-.lockable.edit-mode input[type="number"],
-.lockable.edit-mode select,
-.lockable.edit-mode textarea {
-  pointer-events: auto;
-  background: var(--bg-input);
-}
-
-.lockable.edit-mode input[type="number"] {
-  -moz-appearance: auto;
-}
-
-.lockable.edit-mode input[type="number"]::-webkit-inner-spin-button,
-.lockable.edit-mode input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: auto;
-}
-
-.lockable input[type="number"]::-webkit-inner-spin-button,
-.lockable input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.lockable.edit-mode input[type="number"] {
-  pointer-events: auto;
-  background: var(--bg-input);
-  -moz-appearance: auto;
-}
-
-.lockable.edit-mode input[type="number"]::-webkit-inner-spin-button,
-.lockable.edit-mode input[type="number"]::-webkit-outer-spin-button {
-  -webkit-appearance: auto;
-}
-.lockable select,
-.lockable textarea {
-  pointer-events: none;
-  background: var(--bg);
-  border-color: var(--border);
-}
-
-.lockable input[type="checkbox"] {
-  pointer-events: none;
-}
-
+.lockable input[type="checkbox"],
 .lockable .shield-label {
   pointer-events: none;
 }
 
-.lockable.edit-mode .shield-label {
-  pointer-events: auto;
-}
-
-/* Always allow "used" checkboxes in abilities */
+/* Always allow "used" checkboxes in abilities, even when the section is locked */
 .lockable input[type="checkbox"][data-field="used"] {
   pointer-events: auto;
 }
@@ -280,13 +231,26 @@ body {
 .lockable.edit-mode input[type="text"],
 .lockable.edit-mode input[type="number"],
 .lockable.edit-mode select,
-.lockable.edit-mode textarea {
+.lockable.edit-mode textarea,
+.lockable.edit-mode input[type="checkbox"],
+.lockable.edit-mode .shield-label {
   pointer-events: auto;
+}
+
+.lockable.edit-mode input[type="text"],
+.lockable.edit-mode input[type="number"],
+.lockable.edit-mode select,
+.lockable.edit-mode textarea {
   background: var(--bg-input);
 }
 
-.lockable.edit-mode input[type="checkbox"] {
-  pointer-events: auto;
+.lockable.edit-mode input[type="number"] {
+  -moz-appearance: auto;
+}
+
+.lockable.edit-mode input[type="number"]::-webkit-inner-spin-button,
+.lockable.edit-mode input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: auto;
 }
 
 /* === Fields === */
@@ -761,6 +725,12 @@ footer {
   padding: 1.5rem 1rem;
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.version-tag {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  opacity: 0.6;
 }
 
 /* === Desktop (2 columns) === */
